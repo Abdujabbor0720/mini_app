@@ -1,0 +1,158 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply font-sans antialiased;
+    @apply bg-gradient-to-br from-blue-50 via-white to-purple-50;
+    @apply text-gray-900;
+    min-height: 100vh;
+  }
+
+  * {
+    @apply border-border;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white/80 backdrop-blur-sm rounded-xl shadow-card border border-white/20;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700;
+    @apply text-white font-medium px-4 py-2 rounded-lg;
+    @apply transition-all duration-200 transform hover:scale-105;
+    @apply shadow-lg hover:shadow-xl;
+    @apply border-0 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-opacity-50;
+  }
+
+  .btn-secondary {
+    @apply bg-white/90 hover:bg-white;
+    @apply text-gray-700 font-medium px-4 py-2 rounded-lg;
+    @apply transition-all duration-200 transform hover:scale-105;
+    @apply shadow-md hover:shadow-lg;
+    @apply border border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50;
+  }
+
+  .btn-danger {
+    @apply bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700;
+    @apply text-white font-medium px-4 py-2 rounded-lg;
+    @apply transition-all duration-200 transform hover:scale-105;
+    @apply shadow-lg hover:shadow-xl;
+    @apply border-0 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 rounded-lg border border-gray-200;
+    @apply bg-white/80 backdrop-blur-sm;
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    @apply transition-all duration-200;
+    @apply placeholder-gray-400;
+  }
+
+  .modal-overlay {
+    @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50;
+    @apply flex items-center justify-center p-4;
+  }
+
+  .modal-content {
+    @apply bg-white rounded-2xl shadow-2xl;
+    @apply w-full max-w-md max-h-[90vh] overflow-y-auto;
+    @apply transform transition-all duration-300;
+  }
+
+  .goal-card {
+    @apply card p-4 hover:shadow-lg transition-all duration-200;
+    @apply border-l-4 border-l-primary-500;
+    @apply cursor-pointer transform hover:scale-[1.02];
+  }
+
+  .goal-card.completed {
+    @apply border-l-green-500 bg-green-50/50;
+  }
+
+  .goal-card.overdue {
+    @apply border-l-red-500 bg-red-50/50;
+  }
+
+  .floating-action-button {
+    @apply fixed bottom-6 right-6 z-40;
+    @apply bg-gradient-to-r from-primary-500 to-primary-600;
+    @apply text-white rounded-full p-4 shadow-2xl;
+    @apply transform transition-all duration-300 hover:scale-110;
+    @apply border-0 focus:outline-none focus:ring-4 focus:ring-primary-500 focus:ring-opacity-30;
+  }
+
+  .stats-card {
+    @apply card p-6 text-center;
+    @apply transform transition-all duration-200 hover:scale-105;
+  }
+
+  .progress-bar {
+    @apply w-full bg-gray-200 rounded-full h-2 overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full bg-gradient-to-r from-primary-500 to-primary-600;
+    @apply transition-all duration-500 ease-out;
+  }
+
+  .navbar {
+    @apply bg-white/90 backdrop-blur-md border-b border-gray-200/50;
+    @apply sticky top-0 z-30;
+  }
+
+  .tab-button {
+    @apply px-4 py-2 rounded-lg font-medium transition-all duration-200;
+    @apply hover:bg-gray-100;
+  }
+
+  .tab-button.active {
+    @apply bg-primary-500 text-white shadow-md;
+  }
+
+  .leaderboard-item {
+    @apply flex items-center justify-between p-4 rounded-lg;
+    @apply bg-white/80 backdrop-blur-sm border border-gray-100;
+    @apply hover:shadow-md transition-all duration-200;
+  }
+
+  .leaderboard-item.current-user {
+    @apply bg-primary-50 border-primary-200;
+  }
+
+  .achievement-badge {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+    @apply bg-yellow-100 text-yellow-800 border border-yellow-200;
+  }
+
+  .skeleton {
+    @apply animate-pulse bg-gray-300 rounded;
+  }
+
+  .loading-spinner {
+    @apply animate-spin rounded-full border-2 border-gray-300 border-t-primary-500;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary-600 to-purple-600 bg-clip-text text-transparent;
+  }
+
+  .glass-effect {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+
+  .telegram-bg {
+    @apply bg-gradient-to-br from-telegram-blue via-telegram-lightBlue to-primary-500;
+  }
+}
