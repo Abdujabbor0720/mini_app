@@ -10,7 +10,7 @@ interface TelegramUser {
 }
 
 interface HomeProps {
-    user?: TelegramUser | null;
+    user: TelegramUser | null;
 }
 
 const Home: React.FC<HomeProps> = ({ user }) => {
