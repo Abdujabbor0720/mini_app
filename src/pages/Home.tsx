@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import '../App.css';
 
+interface TelegramUser {
+    id: number;
+    first_name: string;
+    last_name?: string;
+    username?: string;
+    language_code?: string;
+}
+
 interface HomeProps {
-    user?: {
-        id: number;
-        first_name: string;
-        last_name?: string;
-        username?: string;
-        language_code?: string;
-    };
+    user?: TelegramUser | null;
 }
 
 const Home: React.FC<HomeProps> = ({ user }) => {

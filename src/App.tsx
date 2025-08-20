@@ -49,7 +49,7 @@ const App: React.FC = () => {
                     webApp.expand();
 
                     setState({
-                        user,
+                        user: user ?? undefined,
                         theme,
                         isLoading: false
                     });
@@ -90,7 +90,7 @@ const App: React.FC = () => {
             <div className="app telegram-safe-area">
                 <main className="app-content">
                     <Routes>
-                        <Route path="/" element={<Home user={state.user} />} />
+                        <Route path="/" element={<Home user={state.user ?? undefined} />} />
                         <Route path="/goals" element={<Goals />} />
                         <Route path="/statistics" element={<Statistics />} />
                         <Route path="/settings" element={<Settings />} />
