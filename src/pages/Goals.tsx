@@ -28,7 +28,7 @@ const Goals: React.FC = () => {
     // CRUD amallarini backendga bog'lash
 
     useEffect(() => {
-        fetch('https://server001.alwaysdata.net/api/v1/goals')
+        fetch(`${process.env.REACT_APP_API_URL || '/api/v1'}/goals`)
             .then(res => res.json())
             .then(data => setGoals(data))
             .catch(err => {

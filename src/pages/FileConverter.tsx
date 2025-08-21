@@ -76,7 +76,7 @@ const FileConverter: React.FC = () => {
         try {
             // Bir nechta faylni birlashtirib backendga yuborish
             const formData = new FormData();
-            files.forEach((file, idx) => {
+            files.forEach(file => {
                 formData.append('files', file);
             });
             formData.append('targetFormat', 'pdf');

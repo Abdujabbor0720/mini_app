@@ -1,9 +1,9 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import uz from './locales/uz.json';
-import ru from './locales/ru.json';
-import en from './locales/en.json';
-import tr from './locales/tr.json';
+const uz = require('./locales/uz.json');
+const ru = require('./locales/ru.json');
+const en = require('./locales/en.json');
+const tr = require('./locales/tr.json');
 
 i18n
     .use(initReactI18next)

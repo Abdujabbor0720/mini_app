@@ -59,7 +59,7 @@ const Settings: React.FC = () => {
 
     useEffect(() => {
         // Load settings from backend API
-        fetch('https://server001.alwaysdata.net/api/v1/settings')
+        fetch(`${process.env.REACT_APP_API_URL || '/api/v1'}/settings`)
             .then(res => res.json())
             .then(data => {
                 setSettings(data);
@@ -74,7 +74,7 @@ const Settings: React.FC = () => {
                 document.documentElement.setAttribute('data-theme', settings.theme === 'auto' ? 'light' : settings.theme);
             });
         // Ilova haqida ma'lumotni backenddan olish
-        fetch('https://server001.alwaysdata.net/api/v1/app-info')
+        fetch(`${process.env.REACT_APP_API_URL || '/api/v1'}/app-info`)
             .then(res => res.json())
             .then(data => {
                 setAppInfo({
@@ -103,7 +103,7 @@ const Settings: React.FC = () => {
         }
 
         // Save to backend
-        fetch('https://server001.alwaysdata.net/api/v1/settings', {
+        fetch(`${process.env.REACT_APP_API_URL || '/api/v1'}/settings`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(updated)
@@ -112,7 +112,7 @@ const Settings: React.FC = () => {
 
     const saveSettings = async () => {
         setSaving(true);
-        await fetch('https://server001.alwaysdata.net/api/v1/settings', {
+        await fetch(`${process.env.REACT_APP_API_URL || '/api/v1'}/settings`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(settings)

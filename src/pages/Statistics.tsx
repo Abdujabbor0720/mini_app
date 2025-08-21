@@ -33,7 +33,7 @@ const Statistics: React.FC = () => {
 
     useEffect(() => {
         setLoading(true);
-        fetch(`https://server001.alwaysdata.net/api/v1/statistics?range=${timeRange}`)
+        fetch(`${process.env.REACT_APP_API_URL || '/api/v1'}/statistics?range=${timeRange}`)
             .then(res => res.json())
             .then(data => {
                 setStats(data);

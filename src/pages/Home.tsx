@@ -23,7 +23,7 @@ const Home: React.FC<HomeProps> = ({ user }) => {
     });
     const [recentActivity, setRecentActivity] = useState<Array<{ text: string, time: string }>>([]);
 
-    const API_URL = 'https://server001.alwaysdata.net//api/v1';
+    const API_URL = process.env.REACT_APP_API_URL || '/api/v1';
 
     useEffect(() => {
         // Set greeting based on time

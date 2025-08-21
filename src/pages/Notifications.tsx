@@ -21,7 +21,7 @@ const Notifications: React.FC = () => {
 
     useEffect(() => {
         setLoading(true);
-        fetch('https://server001.alwaysdata.net/api/v1/notifications')
+        fetch(`${process.env.REACT_APP_API_URL || '/api/v1'}/notifications`)
             .then(res => res.json())
             .then(data => {
                 setNotifications(data);
