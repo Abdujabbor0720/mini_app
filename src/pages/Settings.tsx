@@ -46,21 +46,50 @@ const Settings: React.FC = () => {
         firstName: 'Foydalanuvchi',
         lastName: '',
         username: '@username',
-        joinDate: '2024-01-15'
+        joinDate: '2025-01-15'
+    });
+    const [appInfo, setAppInfo] = useState({
+        version: '1.0.0',
+        lastUpdate: new Date().toISOString().split('T')[0],
+        developer: 'OptimalBot Team'
     });
 
     const [showResetConfirm, setShowResetConfirm] = useState(false);
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
-        // Load settings from localStorage or API
-        const savedSettings = localStorage.getItem('optimalbot-settings');
-        if (savedSettings) {
-            setSettings(JSON.parse(savedSettings));
-        }
-
-        // Apply theme
-        document.documentElement.setAttribute('data-theme', settings.theme === 'auto' ? 'light' : settings.theme);
+        // Load settings from backend API
+        fetch('https://server001.alwaysdata.net/api/v1/settings')
+            .then(res => res.json())
+            .then(data => {
+                setSettings(data);
+                document.documentElement.setAttribute('data-theme', data.theme === 'auto' ? 'light' : data.theme);
+            })
+            .catch(() => {
+                // Fallback to localStorage if API fails
+                const savedSettings = localStorage.getItem('optimalbot-settings');
+                if (savedSettings) {
+                    setSettings(JSON.parse(savedSettings));
+                }
+                document.documentElement.setAttribute('data-theme', settings.theme === 'auto' ? 'light' : settings.theme);
+            });
+        // Ilova haqida ma'lumotni backenddan olish
+        fetch('https://server001.alwaysdata.net/api/v1/app-info')
+            .then(res => res.json())
+            .then(data => {
+                setAppInfo({
+                    version: data.version || '1.0.0',
+                    lastUpdate: data.lastUpdate || new Date().toISOString().split('T')[0],
+                    developer: data.developer || 'OptimalBot Team'
+                });
+            })
+            .catch(() => {
+                setAppInfo({
+                    version: '1.0.0',
+                    lastUpdate: new Date().toISOString().split('T')[0],
+                    developer: 'OptimalBot Team'
+                });
+            });
     }, []);
 
     const updateSettings = (newSettings: Partial<UserSettings>) => {
@@ -72,12 +101,22 @@ const Settings: React.FC = () => {
         if (newSettings.theme) {
             document.documentElement.setAttribute('data-theme', newSettings.theme === 'auto' ? 'light' : newSettings.theme);
         }
+
+        // Save to backend
+        fetch('https://server001.alwaysdata.net/api/v1/settings', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(updated)
+        }).catch(() => { });
     };
 
     const saveSettings = async () => {
         setSaving(true);
-        // Simulate API call
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await fetch('https://server001.alwaysdata.net/api/v1/settings', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(settings)
+        });
         setSaving(false);
 
         // Show success message
@@ -198,6 +237,7 @@ const Settings: React.FC = () => {
                         <label className="form-label">Interfeys tili</label>
                         <select
                             className="form-control"
+                            style={{ color: 'var(--primary-text)', background: 'var(--card-bg)' }}
                             value={settings.language}
                             onChange={(e) => updateSettings({ language: e.target.value })}
                         >
@@ -474,25 +514,27 @@ const Settings: React.FC = () => {
                     <div className="list">
                         <div className="list-item">
                             <span>Versiya</span>
-                            <span>1.0.0</span>
+                            <span>{appInfo.version}</span>
                         </div>
                         <div className="list-item">
                             <span>Oxirgi yangilanish</span>
-                            <span>2024-01-20</span>
+                            <span>{appInfo.lastUpdate}</span>
                         </div>
                         <div className="list-item">
                             <span>Dasturchi</span>
-                            <span>OptimalBot Team</span>
+                            <span>{appInfo.developer}</span>
                         </div>
                     </div>
 
                     <div style={{ marginTop: 'var(--spacing-lg)' }}>
                         <div className="grid grid-2">
-                            <button className="btn btn-secondary">
+                            <a className="btn btn-secondary" href="tel:+998770131725">
                                 📞 Qo'llab-quvvatlash
-                            </button>
+                                <br />
+                                <span style={{ fontSize: '0.9rem', color: 'var(--primary-text)' }}>+998770131725</span>
+                            </a>
                             <button className="btn btn-secondary">
-                                ⭐ Bahola berish
+                                ⭐ Baholash
                             </button>
                         </div>
                     </div>

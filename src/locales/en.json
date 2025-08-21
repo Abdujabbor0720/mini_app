@@ -1,0 +1,17 @@
+{
+    "welcome": "Welcome!",
+    "settings": "Settings",
+    "goals": "Goals",
+    "statistics": "Statistics",
+    "fileConverter": "File Converter",
+    "language": "Language",
+    "theme": "Theme",
+    "save": "Save",
+    "cancel": "Cancel",
+    "addGoal": "Add Goal",
+    "completed": "Completed",
+    "active": "Active",
+    "all": "All",
+    "delete": "Delete",
+    "edit": "Edit"
+}

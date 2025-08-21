@@ -24,42 +24,17 @@ const Goals: React.FC = () => {
         priority: 'medium' as const,
         deadline: ''
     });
+    // Backenddan maqsadlarni olish uchun useEffect va fetch
+    // CRUD amallarini backendga bog'lash
 
     useEffect(() => {
-        // Load goals (mock data for now)
-        setGoals([
-            {
-                id: 1,
-                title: 'Kitob o\'qish',
-                description: 'Oyiga 2 ta kitob o\'qish',
-                category: 'Ta\'lim',
-                status: 'in_progress',
-                priority: 'high',
-                deadline: '2024-02-28',
-                progress: 65,
-                createdAt: '2024-01-15'
-            },
-            {
-                id: 2,
-                title: 'Sport bilan shug\'ullanish',
-                description: 'Haftada 3 marta sport zali',
-                category: 'Salomatlik',
-                status: 'in_progress',
-                priority: 'medium',
-                progress: 40,
-                createdAt: '2024-01-10'
-            },
-            {
-                id: 3,
-                title: 'Yangi til o\'rganish',
-                description: 'Ingliz tilini yaxshilash',
-                category: 'Ta\'lim',
-                status: 'completed',
-                priority: 'high',
-                progress: 100,
-                createdAt: '2024-01-01'
-            }
-        ]);
+        fetch('https://server001.alwaysdata.net/api/v1/goals')
+            .then(res => res.json())
+            .then(data => setGoals(data))
+            .catch(err => {
+                setGoals([]);
+                console.error('Maqsadlarni olishda xatolik:', err);
+            });
     }, []);
 
     const filteredGoals = goals.filter(goal => {
@@ -132,9 +107,14 @@ const Goals: React.FC = () => {
 
     return (
         <div className="page fade-in">
-            <div className="page-header">
-                <h1 className="page-title">🎯 Maqsadlarim</h1>
-                <p className="page-subtitle">Maqsadlaringizni boshqaring va kuzatib boring</p>
+            <div className="page-header" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <button className="back-btn" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>
+                    ←
+                </button>
+                <div>
+                    <h1 className="page-title">🎯 Maqsadlarim</h1>
+                    <p className="page-subtitle">Maqsadlaringizni boshqaring va kuzatib boring</p>
+                </div>
             </div>
 
             {/* Tabs */}

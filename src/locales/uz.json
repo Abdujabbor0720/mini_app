@@ -1,0 +1,17 @@
+{
+    "welcome": "Xush kelibsiz!",
+    "settings": "Sozlamalar",
+    "goals": "Maqsadlar",
+    "statistics": "Statistika",
+    "fileConverter": "Fayl konvertatsiya",
+    "language": "Til",
+    "theme": "Mavzu",
+    "save": "Saqlash",
+    "cancel": "Bekor qilish",
+    "addGoal": "Yangi maqsad qo'shish",
+    "completed": "Bajarilgan",
+    "active": "Faol",
+    "all": "Barchasi",
+    "delete": "O'chirish",
+    "edit": "Tahrirlash"
+}

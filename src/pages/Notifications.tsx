@@ -20,69 +20,19 @@ const Notifications: React.FC = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Simulate loading notifications
-        setTimeout(() => {
-            setNotifications([
-                {
-                    id: '1',
-                    title: 'Maqsad bajarildi! 🎉',
-                    message: '"Kitob o\'qish" maqsadi muvaffaqiyatli bajarildi!',
-                    type: 'success',
-                    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
-                    read: false,
-                    action: {
-                        label: 'Ko\'rish',
-                        url: '#/goals'
-                    }
-                },
-                {
-                    id: '2',
-                    title: 'Fayl konvertatsiya tayyor',
-                    message: 'Resume.docx fayli PDF formatiga konvertatsiya qilindi',
-                    type: 'info',
-                    timestamp: new Date(Date.now() - 5 * 60 * 60 * 1000), // 5 hours ago
-                    read: false,
-                    action: {
-                        label: 'Yuklab olish',
-                        url: '#/files'
-                    }
-                },
-                {
-                    id: '3',
-                    title: 'Eslatma: Kunlik maqsad',
-                    message: 'Bugun sport bilan shug\'ullanish vaqti keldi!',
-                    type: 'warning',
-                    timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
-                    read: true,
-                    action: {
-                        label: 'Maqsadlarni ko\'rish',
-                        url: '#/goals'
-                    }
-                },
-                {
-                    id: '4',
-                    title: 'Yangi yutuq qo\'lga kiritildi!',
-                    message: 'Siz "Doimiylik" yutuqini qo\'lga kiritdingiz - 7 kun ketma-ket faol!',
-                    type: 'success',
-                    timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-                    read: true,
-                    action: {
-                        label: 'Yutuqlarni ko\'rish',
-                        url: '#/statistics'
-                    }
-                },
-                {
-                    id: '5',
-                    title: 'Tizim xabari',
-                    message: 'OptimalBot ilovasi 1.0.1 versiyasiga yangilandi',
-                    type: 'info',
-                    timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
-                    read: true
-                }
-            ]);
-            setLoading(false);
-        }, 1000);
-    }, []);
+        setLoading(true);
+        fetch('https://server001.alwaysdata.net/api/v1/notifications')
+            .then(res => res.json())
+            .then(data => {
+                setNotifications(data);
+                setLoading(false);
+            })
+            .catch(err => {
+                setNotifications([]);
+                setLoading(false);
+                console.error('Bildirishnomalarni olishda xatolik:', err);
+            });
+    }, [filter]);
 
     const filteredNotifications = notifications.filter(notification => {
         if (filter === 'unread') return !notification.read;
@@ -159,14 +109,19 @@ const Notifications: React.FC = () => {
 
     return (
         <div className="page fade-in">
-            <div className="page-header">
-                <h1 className="page-title">🔔 Bildirishnomalar</h1>
-                <p className="page-subtitle">
-                    {unreadCount > 0
-                        ? `${unreadCount} ta o'qilmagan bildirishnoma`
-                        : 'Barcha bildirishnomalar o\'qilgan'
-                    }
-                </p>
+            <div className="page-header" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <button className="back-btn" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>
+                    ←
+                </button>
+                <div>
+                    <h1 className="page-title">🔔 Bildirishnomalar</h1>
+                    <p className="page-subtitle">
+                        {unreadCount > 0
+                            ? `${unreadCount} ta o'qilmagan bildirishnoma`
+                            : 'Barcha bildirishnomalar o\'qilgan'
+                        }
+                    </p>
+                </div>
             </div>
 
             {/* Filter Tabs */}

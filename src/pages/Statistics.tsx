@@ -32,37 +32,18 @@ const Statistics: React.FC = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // Simulate API call
-        setTimeout(() => {
-            setStats({
-                goals: {
-                    total: 12,
-                    completed: 8,
-                    inProgress: 3,
-                    pending: 1,
-                    completionRate: 67
-                },
-                files: {
-                    totalConverted: 45,
-                    todayConverted: 3,
-                    weekConverted: 12,
-                    monthConverted: 28
-                },
-                activity: {
-                    streakDays: 7,
-                    lastActive: '2024-01-20',
-                    totalSessions: 34,
-                    averageDaily: 2.3
-                },
-                categories: {
-                    'Ta\'lim': 5,
-                    'Salomatlik': 3,
-                    'Ishchi': 2,
-                    'Shaxsiy': 2
-                }
+        setLoading(true);
+        fetch(`https://server001.alwaysdata.net/api/v1/statistics?range=${timeRange}`)
+            .then(res => res.json())
+            .then(data => {
+                setStats(data);
+                setLoading(false);
+            })
+            .catch(err => {
+                setLoading(false);
+                setStats(null);
+                console.error('Statistika olishda xatolik:', err);
             });
-            setLoading(false);
-        }, 1000);
     }, [timeRange]);
 
     if (loading) {
@@ -121,9 +102,14 @@ const Statistics: React.FC = () => {
 
     return (
         <div className="page fade-in">
-            <div className="page-header">
-                <h1 className="page-title">📊 Statistika</h1>
-                <p className="page-subtitle">Yutuqlaringiz va taraqqiyotingizni kuzating</p>
+            <div className="page-header" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <button className="back-btn" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>
+                    ←
+                </button>
+                <div>
+                    <h1 className="page-title">📊 Statistika</h1>
+                    <p className="page-subtitle">Yutuqlaringiz va taraqqiyotingizni kuzating</p>
+                </div>
             </div>
 
             {/* Time Range Selector */}

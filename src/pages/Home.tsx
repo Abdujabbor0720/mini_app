@@ -21,8 +21,9 @@ const Home: React.FC<HomeProps> = ({ user }) => {
         filesConverted: 0,
         streakDays: 0
     });
+    const [recentActivity, setRecentActivity] = useState<Array<{ text: string, time: string }>>([]);
 
-    const API_URL = 'https://optimal-bot-api.vercel.app/api/v1';
+    const API_URL = 'https://server001.alwaysdata.net//api/v1';
 
     useEffect(() => {
         // Set greeting based on time
@@ -35,38 +36,27 @@ const Home: React.FC<HomeProps> = ({ user }) => {
             setGreeting('Xayrli kech!');
         }
 
-        // Load quick stats (mock data for now)
-        setQuickStats({
-            totalGoals: 5,
-            completedGoals: 3,
-            filesConverted: 12,
-            streakDays: 7
-        });
-
-        if (user) {
-            fetch(`${API_URL}/auth/telegram`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    telegramId: user.id,
-                    username: user.username,
-                    firstName: user.first_name,
-                    lastName: user.last_name,
-                    language: user.language_code,
-                    initData: window.Telegram?.WebApp?.initData || '',
-                }),
-            })
-                .then(res => res.json())
-                .then(data => {
-                    // You can store token or user info in state if needed
-                    console.log('Auth response:', data);
-                })
-                .catch(err => {
-                    console.error('Auth error:', err);
+        // Statistikani va faoliyatni backenddan olish
+        fetch(`${API_URL}/statistics/home`)
+            .then(res => res.json())
+            .then(data => {
+                setQuickStats({
+                    totalGoals: data.totalGoals,
+                    completedGoals: data.completedGoals,
+                    filesConverted: data.filesConverted,
+                    streakDays: data.streakDays
                 });
-        }
+                setRecentActivity(data.recentActivity || []);
+            })
+            .catch(() => {
+                setQuickStats({
+                    totalGoals: 0,
+                    completedGoals: 0,
+                    filesConverted: 0,
+                    streakDays: 0
+                });
+                setRecentActivity([]);
+            });
     }, [user]);
 
     const quickActions = [
@@ -103,13 +93,18 @@ const Home: React.FC<HomeProps> = ({ user }) => {
     return (
         <div className="page fade-in">
             {/* Welcome Section */}
-            <div className="page-header">
-                <h1 className="page-title">
-                    {greeting} {user?.first_name || 'Foydalanuvchi'}!
-                </h1>
-                <p className="page-subtitle">
-                    OptimalBot bilan maqsadlaringizga erishing va fayl konvertatsiya qiling
-                </p>
+            <div className="page-header" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <button className="back-btn" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>
+                    ←
+                </button>
+                <div>
+                    <h1 className="page-title">
+                        {greeting} {user?.first_name || 'Foydalanuvchi'}!
+                    </h1>
+                    <p className="page-subtitle">
+                        OptimalBot bilan maqsadlaringizga erishing va fayl konvertatsiya qiling
+                    </p>
+                </div>
             </div>
 
             {/* Quick Stats */}
@@ -177,30 +172,22 @@ const Home: React.FC<HomeProps> = ({ user }) => {
                 </div>
                 <div className="card-content">
                     <ul className="list">
-                        <li className="list-item">
-                            <div>
-                                <strong>📚 "Kitob o'qish" maqsadi yaratildi</strong>
-                                <div style={{ fontSize: '0.875rem', color: 'var(--secondary-text)' }}>
-                                    2 soat oldin
-                                </div>
-                            </div>
-                        </li>
-                        <li className="list-item">
-                            <div>
-                                <strong>📄 Resume.docx → PDF konvertatsiya qilindi</strong>
-                                <div style={{ fontSize: '0.875rem', color: 'var(--secondary-text)' }}>
-                                    5 soat oldin
-                                </div>
-                            </div>
-                        </li>
-                        <li className="list-item">
-                            <div>
-                                <strong>🎯 "Sport" maqsadi bajarildi</strong>
-                                <div style={{ fontSize: '0.875rem', color: 'var(--secondary-text)' }}>
-                                    1 kun oldin
-                                </div>
-                            </div>
-                        </li>
+                        {recentActivity.length === 0 ? (
+                            <li className="list-item">
+                                <div>Faoliyat topilmadi</div>
+                            </li>
+                        ) : (
+                            recentActivity.map((item, idx) => (
+                                <li key={idx} className="list-item">
+                                    <div>
+                                        <strong>{item.text}</strong>
+                                        <div style={{ fontSize: '0.875rem', color: 'var(--secondary-text)' }}>
+                                            {item.time}
+                                        </div>
+                                    </div>
+                                </li>
+                            ))
+                        )}
                     </ul>
                 </div>
             </div>

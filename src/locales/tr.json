@@ -1,0 +1,17 @@
+{
+    "welcome": "Hoşgeldiniz!",
+    "settings": "Ayarlar",
+    "goals": "Hedefler",
+    "statistics": "İstatistik",
+    "fileConverter": "Dosya Dönüştürücü",
+    "language": "Dil",
+    "theme": "Tema",
+    "save": "Kaydet",
+    "cancel": "İptal",
+    "addGoal": "Yeni hedef ekle",
+    "completed": "Tamamlandı",
+    "active": "Aktif",
+    "all": "Tümü",
+    "delete": "Sil",
+    "edit": "Düzenle"
+}

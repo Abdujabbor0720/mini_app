@@ -61,61 +61,55 @@ const FileConverter: React.FC = () => {
 
         setConverting(true);
 
-        for (const file of files) {
-            const conversionId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
-
-            // Add to conversions list with processing status
-            const newConversion: FileConversionResult = {
-                id: conversionId,
-                originalName: file.name,
-                convertedName: `${file.name.split('.')[0]}.pdf`, // Default to PDF
-                size: file.size,
-                status: 'processing',
-                timestamp: new Date()
-            };
-
-            setConversions(prev => [newConversion, ...prev]);
-
-            try {
-                // Simulate API call for conversion
-                await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 3000));
-
-                // Simulate success
-                if (Math.random() > 0.1) { // 90% success rate
-                    setConversions(prev => prev.map(conv =>
-                        conv.id === conversionId
-                            ? {
-                                ...conv,
-                                status: 'completed',
-                                downloadUrl: `#download-${conversionId}`
-                            }
-                            : conv
-                    ));
-                } else {
-                    // Simulate error
-                    setConversions(prev => prev.map(conv =>
-                        conv.id === conversionId
-                            ? {
-                                ...conv,
-                                status: 'error',
-                                error: 'Konvertatsiya qilishda xatolik yuz berdi'
-                            }
-                            : conv
-                    ));
-                }
-            } catch (error) {
-                setConversions(prev => prev.map(conv =>
-                    conv.id === conversionId
-                        ? {
-                            ...conv,
-                            status: 'error',
-                            error: 'Kutilmagan xatolik'
-                        }
-                        : conv
-                ));
+        if (files.length === 0) return;
+        setConverting(true);
+        const conversionId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+        const newConversion: FileConversionResult = {
+            id: conversionId,
+            originalName: files.map(f => f.name).join(', '),
+            convertedName: 'Birlashtirilgan.pdf',
+            size: files.reduce((sum, f) => sum + f.size, 0),
+            status: 'processing',
+            timestamp: new Date()
+        };
+        setConversions(prev => [newConversion, ...prev]);
+        try {
+            // Bir nechta faylni birlashtirib backendga yuborish
+            const formData = new FormData();
+            files.forEach((file, idx) => {
+                formData.append('files', file);
+            });
+            formData.append('targetFormat', 'pdf');
+            formData.append('merge', 'true');
+            const response = await fetch(`${process.env.REACT_APP_API_URL || '/api/v1'}/files/convert`, {
+                method: 'POST',
+                body: formData
+            });
+            if (!response.ok) {
+                throw new Error('Konvertatsiya qilishda xatolik yuz berdi');
             }
+            const result = await response.json();
+            setConversions(prev => prev.map(conv =>
+                conv.id === conversionId
+                    ? {
+                        ...conv,
+                        status: 'completed',
+                        downloadUrl: result.downloadUrl,
+                        convertedName: result.convertedName || newConversion.convertedName
+                    }
+                    : conv
+            ));
+        } catch (error: any) {
+            setConversions(prev => prev.map(conv =>
+                conv.id === conversionId
+                    ? {
+                        ...conv,
+                        status: 'error',
+                        error: error.message || 'Kutilmagan xatolik'
+                    }
+                    : conv
+            ));
         }
-
         setFiles([]);
         setConverting(false);
     };
@@ -142,23 +136,21 @@ const FileConverter: React.FC = () => {
     };
 
     const downloadFile = (conversion: FileConversionResult) => {
-        // Simulate file download
-        const blob = new Blob(['Konvertatsiya qilingan fayl'], { type: 'application/pdf' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = conversion.convertedName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        if (conversion.downloadUrl) {
+            window.open(conversion.downloadUrl, '_blank');
+        }
     };
 
     return (
         <div className="page fade-in">
-            <div className="page-header">
-                <h1 className="page-title">📄 Fayl konvertatsiya</h1>
-                <p className="page-subtitle">Fayllarni turli formatlarga o'giring</p>
+            <div className="page-header" style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <button className="back-btn" onClick={() => window.history.back()} style={{ background: 'none', border: 'none', fontSize: '1.5rem', cursor: 'pointer' }}>
+                    ←
+                </button>
+                <div>
+                    <h1 className="page-title">📄 Fayl konvertatsiya</h1>
+                    <p className="page-subtitle">Fayllarni turli formatlarga o'giring</p>
+                </div>
             </div>
 
             {/* Supported Formats */}
@@ -169,7 +161,22 @@ const FileConverter: React.FC = () => {
                 <div className="card-content">
                     <div className="grid grid-2">
                         {Object.entries(supportedFormats).map(([format, supported]) => (
-                            <div key={format} className="stat-card">
+                            <div
+                                key={format}
+                                className="stat-card format-card"
+                                tabIndex={0}
+                                style={{
+                                    transition: 'box-shadow 0.3s, background 0.3s',
+                                    cursor: 'pointer',
+                                }}
+                                onFocus={e => e.currentTarget.classList.add('active')}
+                                onBlur={e => e.currentTarget.classList.remove('active')}
+                                onMouseDown={e => e.currentTarget.classList.add('active')}
+                                onMouseUp={e => e.currentTarget.classList.remove('active')}
+                                onMouseLeave={e => e.currentTarget.classList.remove('active')}
+                                onMouseEnter={e => e.currentTarget.classList.add('hovered')}
+                                onMouseOut={e => e.currentTarget.classList.remove('hovered')}
+                            >
                                 <div style={{ fontWeight: '600', marginBottom: 'var(--spacing-xs)' }}>
                                     {getFileIcon(format.toLowerCase())} {format}
                                 </div>
@@ -177,6 +184,17 @@ const FileConverter: React.FC = () => {
                                     {supported.join(', ')} dan
                                 </div>
                             </div>
+                            /* CSS: format-card uchun animatsiya va rang effektlari */
+                            // .format-card:hover, .format-card.hovered {
+                            //   box-shadow: 0 0 0 3px var(--accent-color);
+                            //   background: rgba(0,123,255,0.08);
+                            //   transform: scale(1.03);
+                            // }
+                            // .format-card.active {
+                            //   box-shadow: 0 0 0 3px var(--success-color);
+                            //   background: rgba(40,167,69,0.12);
+                            //   transform: scale(1.05);
+                            // }
                         ))}
                     </div>
                 </div>
@@ -211,7 +229,7 @@ const FileConverter: React.FC = () => {
                             Fayllarni bu erga tashlang yoki bosing
                         </h3>
                         <p style={{ color: 'var(--secondary-text)' }}>
-                            Maksimal hajm: 10 MB
+                            Maksimal hajm: 50 MB
                         </p>
 
                         <input
@@ -221,6 +239,7 @@ const FileConverter: React.FC = () => {
                             style={{ display: 'none' }}
                             onChange={handleFileSelect}
                             accept=".pdf,.docx,.doc,.txt,.rtf,.odt,.jpg,.jpeg,.png,.webp,.bmp,.xlsx,.xls,.pptx,.ppt"
+                            max="52428800"
                         />
                     </div>
 
@@ -336,7 +355,7 @@ const FileConverter: React.FC = () => {
                         <li>Fayllar avtomatik ravishda PDF formatiga konvertatsiya qilinadi</li>
                         <li>Bir vaqtning o'zida bir nechta faylni yuklash mumkin</li>
                         <li>Konvertatsiya qilingan fayllar 24 soat davomida mavjud bo'ladi</li>
-                        <li>Maksimal fayl hajmi 10 MB dan oshmasligi kerak</li>
+                        <li>Maksimal fayl hajmi 50 MB dan oshmasligi kerak</li>
                         <li>Rasm fayllarini PDF ga birlashtirish mumkin</li>
                     </ul>
                 </div>
